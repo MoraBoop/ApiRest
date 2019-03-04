@@ -1,54 +1,24 @@
 const express = require('express');
 const morgan = require('morgan');
 
-const MongoClient = require('mongodb').MongoClient;
-const assert = require('assert');
-
-
-
 var app = express();
-var port = process.env.PORT || 3000; 
+var port = process.env.PORT || 3030; 
 app.use(express.static('public'));
 app.use(morgan('dev'));
 
-// Connection URL
-const url = 'mongodb://localhost:27017';
-// Database Name
-const dbName = 'almacen';
-// Use connect method to connect to the server
-MongoClient.connect(url, (err, client)=> {
-    assert.equal(null, err);
-    console.log("Connected successfully to server");
-    const db = client.db(dbName);
-    client.close();
-});
+// parse application/x-www-form-urlencoded
+app.use(express.urlencoded({ extended: false}));
+// parse application/json
+app.use(express.json());
+// mejor presentacion de lectura
+app.set('json spaces', 2);
 
-app.get('/', (req, res)=>{
-    res.send('Home page');
-});
 
-const findDocuments = (db, callback)=>{
-    const collection = db.collection('articulos');
-    collection.find({}).toArray((err, docs)=> {
-        assert.equal(err, null);
-        console.log(docs)
-        callback(docs);
-    });
-};
-
-app.get('/articulos', (req, res)=>{
-    MongoClient.connect(url, (err, client)=>{
-        assert.equal(null, err);
-        const db = client.db(dbName);
-        findDocuments(db, (result)=>{
-            res.send(result);
-            client.close();
-        });
-    });
-});
+app.use(require('./routes/index'));
+app.use('/api/', require('./routes/articulos'));
 
 
 
 app.listen(port, ()=>{
-    console.log('App run port 3000');
+    console.log('App run port 3030');
 });
