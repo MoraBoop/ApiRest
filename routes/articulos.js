@@ -4,17 +4,14 @@ const assert = require('assert');
 const { Router } = require('express');
 const router = Router();
 
-// Connection URL
 const url = 'mongodb://localhost:27017';
-// Database Name
 const dbName = 'almacen';
-// Create a new MongoClient
 const client = new MongoClient(url);
 
-//Search documents
 const findDocuments = (db, callback)=>{
     const collection = db.collection('articulos');
-    collection.find({}).toArray((err, docs)=> {
+    collection.find({}, 
+        {'_id': 0}).toArray((err, docs)=> {
         assert.equal(err, null);
         callback(docs);
     });

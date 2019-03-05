@@ -1,23 +1,20 @@
 const express = require('express');
 const morgan = require('morgan');
+const cors = require('cors');
 
-var app = express();
-var port = process.env.PORT || 3030; 
+const app = express();
+const port = process.env.PORT || 3030; 
+
+//Config
 app.use(express.static('public'));
 app.use(morgan('dev'));
-
-// parse application/x-www-form-urlencoded
+app.use(cors());
 app.use(express.urlencoded({ extended: false}));
-// parse application/json
 app.use(express.json());
-// mejor presentacion de lectura
 app.set('json spaces', 2);
 
-
-app.use(require('./routes/index'));
+//Routes
 app.use('/api/', require('./routes/articulos'));
-
-
 
 app.listen(port, ()=>{
     console.log('App run port 3030');
